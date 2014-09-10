@@ -23,8 +23,8 @@ public Action:Event_RewritePlayerHurtEvent(Handle:event, const String:name[], bo
 
   if (hitgroup != HITGROUP_HEAD)
   {
-    new client = GetClientOfUserId(GetEventInt(event, "userid"));
-    SetEntProp(client, Prop_Data, "m_iHealth", GetClientHealth(client) + GetEventInt(event, "dmg_health"));
-    return Plugin_Continue;
+    new client = GetClientOfUserId(GetEventInt(event, "userid"))
+    SetEntProp(client, Prop_Data, "m_iHealth", GetClientHealth(client) + GetEventInt(event, "dmg_health"))
+    return Plugin_Continue
   }
 }
