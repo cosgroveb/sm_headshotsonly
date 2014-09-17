@@ -8,25 +8,31 @@ public Plugin:myinfo =
   name = "Headshots Only",
   author = "Brian Cosgrove",
   description = "Only headshots count. Except that grenades and knives count too.",
-  version = "0.1",
+  version = "0.2",
   url = "https://github.com/cosgroveb/sm_headshotsonly/"
 };
 
+new Handle:sm_headshotsonly = INVALID_HANDLE
+
 public OnPluginStart()
 {
+  sm_headshotsonly = CreateConVar("sm_headshotsonly", "0", "Restrict damage to headshots, melee weapons, and grenades. <0 = Off| 1 = On>", FCVAR_NOTIFY)
   HookEvent("player_hurt", Event_RewritePlayerHurtEvent, EventHookMode_Pre)
 }
 
 public Action:Event_RewritePlayerHurtEvent(Handle:event, const String:name[], bool:dontBroadcast)
 {
-  new Integer:hitgroup = GetEventInt(event, "hitgroup")
-
-  if ((hitgroup != HITGROUP_HEAD) && !DamageFromApprovedNonHeadshotWeapon(event) && DamageFromAPlayer(event))
+  if (GetConVarInt(sm_headshotsonly) == 1)
   {
-    new client = GetClientOfUserId(GetEventInt(event, "userid"))
-    SetEntProp(client, Prop_Data, "m_iHealth", GetClientHealth(client) + GetEventInt(event, "dmg_health"))
-    return Plugin_Continue
+    new Integer:hitgroup = GetEventInt(event, "hitgroup")
+
+    if ((hitgroup != HITGROUP_HEAD) && !DamageFromApprovedNonHeadshotWeapon(event) && DamageFromAPlayer(event))
+    {
+      new client = GetClientOfUserId(GetEventInt(event, "userid"))
+      SetEntProp(client, Prop_Data, "m_iHealth", GetClientHealth(client) + GetEventInt(event, "dmg_health"))
+    }
   }
+  return Plugin_Continue
 }
 
 DamageFromAPlayer(event)
